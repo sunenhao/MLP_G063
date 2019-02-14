@@ -328,10 +328,11 @@ class PLANTDataProvider(DataProvider):
         print(loaded.keys())
         inputs, targets = loaded['inputs'], loaded['targets']
         inputs = inputs.astype(np.float32)
+        image_size = 224
         if flatten:
-            inputs = np.reshape(inputs, newshape=(-1, 51*51*3))
+            inputs = np.reshape(inputs, newshape=(-1, image_size*image_size*3))
         else:
-            inputs = np.reshape(inputs, newshape=(-1, 3, 51, 51))
+            inputs = np.reshape(inputs, newshape=(-1, 3, image_size, image_size))
         inputs = inputs / 255.0
         # pass the loaded data to the parent class __init__
         super(PLANTDataProvider, self).__init__(

@@ -5,7 +5,8 @@ import data_providers as data_providers
 import numpy as np
 from arg_extractor import get_args
 from experiment_builder import ExperimentBuilder
-from model_architectures import ConvolutionalNetwork
+#from model_architectures import ConvolutionalNetwork
+from my_architectures import MyConvolutionalNetwork
 
 
 args = get_args()  # get arguments from command line
@@ -14,6 +15,7 @@ torch.manual_seed(seed=args.seed) # sets pytorch's seed
 
 
 if args.dataset_name == 'plant':
+    print("loading plant data")
     train_data = data_providers.PLANTDataProvider('train', batch_size=args.batch_size,
                                                    rng=rng, flatten=False)  # initialize our rngs using the argument set seed
     val_data = data_providers.PLANTDataProvider('valid', batch_size=args.batch_size,
@@ -67,7 +69,14 @@ elif args.dataset_name == 'cifar100':
 
     num_output_classes = 100
 
+'''
 custom_conv_net = ConvolutionalNetwork(  # initialize our network object, in this case a ConvNet
+    input_shape=(args.batch_size, args.image_num_channels, args.image_height, args.image_height),
+    dim_reduction_type=args.dim_reduction_type, num_filters=args.num_filters, num_layers=args.num_layers, use_bias=False,
+    num_output_classes=num_output_classes)
+'''
+
+custom_conv_net = MyConvolutionalNetwork(  # initialize our network object, in this case a ConvNet
     input_shape=(args.batch_size, args.image_num_channels, args.image_height, args.image_height),
     dim_reduction_type=args.dim_reduction_type, num_filters=args.num_filters, num_layers=args.num_layers, use_bias=False,
     num_output_classes=num_output_classes)
@@ -75,7 +84,7 @@ custom_conv_net = ConvolutionalNetwork(  # initialize our network object, in thi
 conv_experiment = ExperimentBuilder(network_model=custom_conv_net,
                                     experiment_name=args.experiment_name,
                                     num_epochs=args.num_epochs,
-                                    weight_decay_coefficient=args.weight_decay_coefficient,
+				    weight_decay_coefficient=args.weight_decay_coefficient,
                                     gpu_id=args.gpu_id, use_gpu=args.use_gpu,
                                     continue_from_epoch=args.continue_from_epoch,
                                     train_data=train_data, val_data=val_data,
