@@ -29,9 +29,9 @@ print("GPU is on?", if_gpu)
 # Show some information of Kaggle's input folder.
 
 print(os.listdir("../"))
-print(os.listdir("../input"))
-print(os.listdir("../input/train"))
-print(os.listdir("../input/test")[:6])
+print(os.listdir("./data"))
+print(os.listdir("./data/train"))
+print(os.listdir("./data/test")[:6])
 
 
 # In[ ]:
@@ -46,7 +46,7 @@ def copytree_and_overwrite(from_path, to_path):
     shutil.copytree(from_path, to_path)
     return True
 
-copytree_and_overwrite("../input/test", "../working/tmp/test/test_images")
+copytree_and_overwrite("./data/test", "../working/tmp/test/test_images")
 
 print(os.listdir("../working/tmp/test/test_images")[:6])
 
@@ -83,7 +83,7 @@ def read_image_folder(resize_shape, image_folder):
 
     return data_dict, info_dict
 
-train_dict, train_info_dict = read_image_folder((224,224),"../input/train")
+train_dict, train_info_dict = read_image_folder((224,224),"./data/train")
 test_dict, test_info_dict = read_image_folder((224,224),"../working/tmp/test/")
 
 
