@@ -23,85 +23,6 @@ if_gpu = torch.cuda.is_available()
 print("GPU is on?", if_gpu)
 
 
-# In[ ]:
-
-
-# Show some information of Kaggle's input folder.
-
-print(os.listdir("../"))
-print(os.listdir("./data"))
-print(os.listdir("./data/train"))
-print(os.listdir("./data/test")[:6])
-
-
-# In[ ]:
-
-
-# ImageFolder() needs subfolders.
-# Copy test images of input to temporary folder to avoid train images.
-
-def copytree_and_overwrite(from_path, to_path):
-    if os.path.exists(to_path):
-        shutil.rmtree(to_path)
-    shutil.copytree(from_path, to_path)
-    return True
-
-copytree_and_overwrite("./data/test", "../working/tmp/test/test_images")
-
-print(os.listdir("../working/tmp/test/test_images")[:6])
-
-
-# In[ ]:
-
-
-# Read and resize images to [224, 224].
-
-def read_image_folder(resize_shape, image_folder):
-    resize = torchvision.transforms.Resize(resize_shape)
-    image_folder = ImageFolder(image_folder, transform=resize)
-
-    idx_to_class = {value: key for key, value in image_folder.class_to_idx.items()}
-    image_paths = [item[0] for item in image_folder.imgs]
-
-    image_shape = np.array(image_folder[0][0]).shape
-    data_length = len(image_folder)
-
-    data_shape = list(image_shape)
-    data_shape.insert(0, data_length)
-
-    data = np.zeros(data_shape, dtype=np.uint8)
-    labels = np.zeros([data_length], dtype=np.int64)
-
-    i = 0
-    for image, label in tqdm(image_folder, desc="Reading Images"):
-        data[i] = np.array(image)
-        labels[i] = label
-        i += 1
-
-    data_dict = {"data": data, "labels": labels, 'data_shape': image_shape}
-    info_dict = {"label_names": idx_to_class, "file_paths": image_paths}
-
-    return data_dict, info_dict
-
-train_dict, train_info_dict = read_image_folder((224,224),"./data/train")
-test_dict, test_info_dict = read_image_folder((224,224),"../working/tmp/test/")
-
-
-# In[ ]:
-
-
-# Show one of train and test.
-import matplotlib.pyplot as plt
-plt.figure()
-plt.imshow(train_dict["data"][800])
-plt.figure()
-plt.imshow(test_dict["data"][600])
-print("iamge shape =", train_dict["data"][300].shape)
-
-
-# In[ ]:
-
-
 # Define a dataset
 
 class ImageDataset(torch.utils.data.Dataset):
@@ -124,6 +45,7 @@ class ImageDataset(torch.utils.data.Dataset):
 # Converts a PIL Image or numpy.ndarray (H x W x C) in the range
 # [0, 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0].
 
+train_dict = np.load("plant-train-data.npz")
 whole_dataset = ImageDataset(train_dict["data"], train_dict["labels"])
 
 print(whole_dataset[0][0].shape)
@@ -323,6 +245,8 @@ net.train(30)
 
 
 # predict test file labels
+test_dict = np.load("plant-test-data.npz")
+train_info_dict = np.load("plant-train-info.npz")
 
 test_set = ImageDataset(test_dict["data"], test_dict["labels"])
 test_loader = torch.utils.data.DataLoader(test_set, batch_size=40)
@@ -340,6 +264,7 @@ print(predict_names[:10])
 
 # classify test_files to different sub_folders
 
+'''
 test_file_paths = test_info_dict["file_paths"]
 save_folder = "../working/tmp/predict"
 
@@ -388,3 +313,4 @@ if os.path.exists("../working/tmp"):
 
 os.listdir("../working")
 
+'''
