@@ -8,9 +8,15 @@ from tqdm import tqdm
 import torch
 import torchvision
 from torchvision.datasets import ImageFolder
+import argparse
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
 
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument("--model_save_name", help="specify model name to save")
+args = parser.parse_args()
+
+print("This quick start")
 if_gpu = torch.cuda.is_available()
 print("GPU is on?", if_gpu)
 
@@ -33,7 +39,7 @@ class ImageDataset(torch.utils.data.Dataset):
 # Converts a PIL Image or numpy.ndarray (H x W x C) in the range
 # [0, 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0].
 
-train_dict = np.load("plant-train-data.npz")
+train_dict = np.load("data/plant-train-data.npz")
 whole_dataset = ImageDataset(train_dict["data"], train_dict["labels"])
 
 print(whole_dataset[0][0].shape)
@@ -86,6 +92,8 @@ print(one_batch_y)
 print(compare)
 print("accuracy =", accuracy.data.numpy())
 
+# Print model's state_dict
+
 
 # define a base utility to train a net.
 class BaseNetPyTorch:
@@ -99,7 +107,7 @@ class BaseNetPyTorch:
         self.loss_function = None
 
         if_gpu = torch.cuda.is_available()
-        self.device_gpu = torch.device("cuda:0" if if_gpu else "cpu")
+        self.device_gpu = torch.device("cuda:1" if if_gpu else "cpu")
 
     def train_loss(self):
         # "training" mode for Dropout etc.
@@ -201,12 +209,24 @@ net.train_loader = train_loader
 net.sub_train_loader = train_loader
 net.valid_loader = valid_loader
 
-net.train(30)
+print("Net's state_dict:")
+for param_tensor in net.model.state_dict():
+    print(param_tensor, "\t", net.model.state_dict()[param_tensor].size())
+
+#save state at prespecified filepath
+model_save_dir = "models"
+model_idx = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
+torch.save(net.model.state_dict(), f=os.path.join(model_save_dir, "{}_{}".format(args.model_save_name, str(model_idx))))
 
 
+
+#net.train(1)
+
+'''
+>>>>>>> 8a475e410543340a4681a5ab0c45f7007f544025
 # predict test file labels
-test_dict = np.load("plant-test-data.npz")
-train_info_dict = np.load("plant-train-info.npz")
+test_dict = np.load("data/plant-test-data.npz")
+train_info_dict = np.load("data/plant-train-info.npz")
 
 test_set = ImageDataset(test_dict["data"], test_dict["labels"])
 test_loader = torch.utils.data.DataLoader(test_set, batch_size=40)
@@ -221,6 +241,9 @@ print(predict_names[:10])
 
 
 # classify test_files to different sub_folders
+<<<<<<< HEAD
+'''
+
 '''
 test_file_paths = test_info_dict["file_paths"]
 save_folder = "../working/tmp/predict"
@@ -269,5 +292,4 @@ if os.path.exists("../working/tmp"):
     shutil.rmtree("../working/tmp")
 
 os.listdir("../working")
-
 '''
