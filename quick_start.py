@@ -51,7 +51,7 @@ class ImageDataset(torch.utils.data.Dataset):
 # Converts a PIL Image or numpy.ndarray (H x W x C) in the range
 # [0, 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0].
 
-train_dict = np.load("plant-train-data.npz")
+train_dict = np.load("data/plant-train-data.npz")
 whole_dataset = ImageDataset(train_dict["data"], train_dict["labels"])
 
 print(whole_dataset[0][0].shape)
@@ -256,8 +256,8 @@ torch.save(net.model.state_dict(), f=os.path.join(model_save_dir, "{}_{}".format
 
 '''
 # predict test file labels
-test_dict = np.load("plant-test-data.npz")
-train_info_dict = np.load("plant-train-info.npz")
+test_dict = np.load("data/plant-test-data.npz")
+train_info_dict = np.load("data/plant-train-info.npz")
 
 test_set = ImageDataset(test_dict["data"], test_dict["labels"])
 test_loader = torch.utils.data.DataLoader(test_set, batch_size=40)
