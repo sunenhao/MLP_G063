@@ -1,11 +1,3 @@
-
-# coding: utf-8
-
-# In[ ]:
-
-
-# First, Please turn on the GPU on Kaggle.
-
 import os
 import time
 import shutil
@@ -43,10 +35,6 @@ class ImageDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.x_data)
 
-
-# In[ ]:
-
-
 # Note that torchvision.transforms.ToTensor() will
 # Converts a PIL Image or numpy.ndarray (H x W x C) in the range
 # [0, 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0].
@@ -57,12 +45,7 @@ whole_dataset = ImageDataset(train_dict["data"], train_dict["labels"])
 print(whole_dataset[0][0].shape)
 print(whole_dataset[4610])
 
-
-# In[ ]:
-
-
 # subset the whole train set for accuracy check while training.
-
 def array_random_pick(array, pick_num):
     index = np.arange(len(array))
     pick = np.random.choice(len(array), pick_num, replace=False)
@@ -78,22 +61,14 @@ print(len(train_set),len(valid_set))
 print(train_set[4010])
 print(valid_set[401])
 
-
-# In[ ]:
-
-
 # Use DataLoader to group data batchs. Here use size 4 for a batch.
 # DataLoader will return a iterator.
-
 train_loader = torch.utils.data.DataLoader(train_set, batch_size=5)
 load_iter = iter(train_loader)
 one_batch_x, one_batch_y = next(load_iter)
 
 print(one_batch_y)
 print(one_batch_x.shape)
-
-
-# In[ ]:
 
 
 # Use PyTorch's built-in model to generate AlexNet with classes 12.
@@ -108,7 +83,6 @@ print(alex_out)
 # We use the max index of alex_out to
 # evaluate the accuracy of model predict.
 # Now the accuracy is zero before model train.
-
 predict = torch.argmax(alex_out, dim = 1)
 compare = predict == one_batch_y
 accuracy = compare.sum() / len(predict)
@@ -120,10 +94,8 @@ print("accuracy =", accuracy.data.numpy())
 
 # Print model's state_dict
 
-# In[ ]:
 
 # define a base utility to train a net.
-
 class BaseNetPyTorch:
     def __init__(self):
         self.train_loader = None
@@ -224,11 +196,7 @@ class BaseNetPyTorch:
         return True
 
 
-# In[ ]:
-
-
 # It is very important to turn on shuffle=True of training set
-
 train_loader = torch.utils.data.DataLoader(train_set, batch_size=40, shuffle=True)
 valid_loader = torch.utils.data.DataLoader(valid_set, batch_size=40)
 
@@ -250,11 +218,12 @@ model_save_dir = "models"
 model_idx = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time()))
 torch.save(net.model.state_dict(), f=os.path.join(model_save_dir, "{}_{}".format(args.model_save_name, str(model_idx))))
 
+
+
 #net.train(1)
 
-# In[ ]:
-
 '''
+>>>>>>> 8a475e410543340a4681a5ab0c45f7007f544025
 # predict test file labels
 test_dict = np.load("data/plant-test-data.npz")
 train_info_dict = np.load("data/plant-train-info.npz")
@@ -270,11 +239,12 @@ print(test_predict[:10])
 print(predict_names[:10])
 
 
-# In[ ]:
-
 
 # classify test_files to different sub_folders
+<<<<<<< HEAD
+'''
 
+'''
 test_file_paths = test_info_dict["file_paths"]
 save_folder = "../working/tmp/predict"
 
